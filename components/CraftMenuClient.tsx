@@ -190,7 +190,7 @@ export default function CraftMenuClient({ videos }: { videos: MediaItem[] }) {
             }}
           >
             <div className="flex items-center gap-3">
-              <span className="bs-comment">// craft</span>
+              <span className="bs-comment">{"// craft"}</span>
               <span style={{ color: "var(--color-shade-mute)", fontFamily: "var(--font-fira-code)" }} className="text-xs">/</span>
               <span
                 className="font-mono text-xs font-medium"
