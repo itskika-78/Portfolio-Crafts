@@ -14,17 +14,14 @@ export type MediaItem = {
 
 function MediaCard({ item, index }: { item: MediaItem; index: number }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
     if (item.type === "video" && videoRef.current) {
       videoRef.current.play();
     }
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
     if (item.type === "video" && videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
