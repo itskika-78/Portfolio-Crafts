@@ -1,11 +1,16 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCursor } from "@/providers/CursorProvider";
 
 export default function Cursor() {
   const { mode, label } = useCursor();
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
@@ -41,6 +46,8 @@ export default function Cursor() {
       document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [mouseX, mouseY]);
+
+  if (isTouch) return null;
 
   const isExpanded = mode === "view" || mode === "drag" || mode === "link";
   const ringSize = isExpanded ? 72 : 40;

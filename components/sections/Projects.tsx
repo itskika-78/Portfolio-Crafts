@@ -75,6 +75,7 @@ function ProjectCard({
   const rotateY = useTransform(springTiltX, [-0.5, 0.5], ["-3deg", "3deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches) return;
     const rect = cardRef.current?.getBoundingClientRect();
     if (!rect) return;
     

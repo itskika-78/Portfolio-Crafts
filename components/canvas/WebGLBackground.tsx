@@ -22,8 +22,13 @@ export default function WebGLBackground() {
 
     // Resize handler
     const resize = () => {
-      c.width = window.innerWidth;
-      c.height = window.innerHeight;
+      const isMobile = window.innerWidth < 768;
+      const scale = isMobile ? 0.5 : 1; // Downscale resolution on mobile
+      c.width = window.innerWidth * scale;
+      c.height = window.innerHeight * scale;
+      // CSS handles stretching it back to 100%
+      c.style.width = "100%";
+      c.style.height = "100%";
     };
     resize();
     window.addEventListener("resize", resize);
@@ -53,7 +58,8 @@ export default function WebGLBackground() {
       h: number;
     }
 
-    const PLANE_COUNT = 22;
+    const isMobile = window.innerWidth < 768;
+    const PLANE_COUNT = isMobile ? 8 : 22; // Vastly reduce geometry on mobile
     const planes: Plane[] = Array.from({ length: PLANE_COUNT }, (_, i) => ({
       angle: (i / PLANE_COUNT) * Math.PI * 2 * 3, // 3 full spiral turns
       z: i * 0.55,

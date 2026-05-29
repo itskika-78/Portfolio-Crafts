@@ -88,6 +88,13 @@ body::before {
   animation: grain-shift 8s steps(1) infinite;
 }
 
+@media (max-width: 768px) {
+  body::before {
+    animation: none;
+    opacity: 0.015; /* Static and lighter to save performance */
+  }
+}
+
 @keyframes grain-shift {
   0%  { transform: translate(0, 0); }
   10% { transform: translate(-2%, -3%); }
