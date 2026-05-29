@@ -57,7 +57,7 @@ export const eventDetails: Record<string, { title: string; period: string }> = {
 };
 
 export const designShowcaseLinks: Record<string, string> = {
-  dynamicIsland: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/DynamicIsland.tsx",
+  dynamicIsland: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/DynamicIsland.tsx",
 Ringer: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/shared/Ring.tsx",
   gooey: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/GooeyFilter.tsx",
   interfaceCraft: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/InterfaceCraft.tsx",
