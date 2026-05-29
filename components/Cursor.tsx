@@ -66,7 +66,7 @@ export default function Cursor() {
       >
         <motion.div
           className="absolute rounded-full bg-brand-primary"
-
+          style={{ mixBlendMode: "difference" }}
           animate={{
             width: dotSize,
             height: dotSize,
@@ -85,7 +85,7 @@ export default function Cursor() {
       >
         <motion.div
           className="absolute rounded-full border border-brand-primary flex items-center justify-center"
-
+          style={{ mixBlendMode: "difference" }}
           animate={{
             width: ringSize,
             height: ringSize,
