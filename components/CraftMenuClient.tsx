@@ -203,7 +203,7 @@ export default function CraftMenuClient({ videos }: { videos: MediaItem[] }) {
 
             <div className="flex items-center gap-4">
               <a
-                href="https://github.com/itskika-78/Craft---An-Animation-Playground"
+                href="https://github.com/itskika-78/Craft-Animation_Playground"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-ghost flex items-center gap-2 rounded-full px-3 py-1.5 opacity-80 hover:opacity-100 transition-opacity"
