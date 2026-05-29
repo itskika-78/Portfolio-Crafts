@@ -58,10 +58,10 @@ export const eventDetails: Record<string, { title: string; period: string }> = {
 
 export const designShowcaseLinks: Record<string, string> = {
   dynamicIsland: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/DynamicIsland.tsx",
-Ringer: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/shared/Ring.tsx",
-  gooey: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/GooeyFilter.tsx",
-  interfaceCraft: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/InterfaceCraft.tsx",
-  smoothness: "https://github.com/itskika-78/Craft---An-Animation-Playground/blob/main/Craft-main/components/SmoothnessState.tsx",
+Ringer: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/shared/Ring.tsx",
+  gooey: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/GooeyFilter.tsx",
+  interfaceCraft: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/InterfaceCraft.tsx",
+  smoothness: "https://github.com/itskika-78/Craft-Animation_Playground/blob/main/components/SmoothnessState.tsx",
   NavBar: "https://codepen.io/Kika-the-bold/pen/KwMZLxV?editors=1100",
   // Add more video-to-github mappings as needed
 };
