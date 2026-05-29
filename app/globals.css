@@ -37,7 +37,6 @@
 /* ─── Base Reset ─────────────────────────────────────────────── */
 @layer base {
   html {
-    overflow: hidden;
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -46,7 +45,6 @@
   body {
     background-color: var(--color-background);
     color: var(--color-shade-primary);
-    overflow: hidden;
     overscroll-behavior: none;
     cursor: none; /* replaced by custom cursor */
   }
