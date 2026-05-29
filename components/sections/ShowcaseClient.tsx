@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { useRef } from "react";
 
 export type MediaItem = {
   title: string;
@@ -14,6 +14,27 @@ export type MediaItem = {
 
 function MediaCard({ item, index }: { item: MediaItem; index: number }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
 
   const handleMouseEnter = () => {
     if (item.type === "video" && videoRef.current) {
@@ -22,6 +43,8 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
   };
 
   const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
     if (item.type === "video" && videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
@@ -36,12 +59,15 @@ function MediaCard({ item, index }: { item: MediaItem; index: number }) {
 
   return (
     <motion.article
+      ref={cardRef}
       className="bs-card pixel-corners scan-line group relative shrink-0 cursor-pointer overflow-hidden"
+      onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      whileHover={item.type === "video" ? { scale: 1.12 } : {}}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d", transformPerspective: 1000 }}
+      whileHover={item.type === "video" ? { scale: 1.05, zIndex: 10 } : { scale: 1.05, zIndex: 10 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
       <div className="relative aspect-[16/10] overflow-hidden border-b border-border-light bg-card-foreground w-[320px] sm:w-[360px]">
         {item.type === "video" ? (
@@ -83,8 +109,6 @@ export default function ShowcaseClient({
   designVideos: MediaItem[];
   eventMedia: MediaItem[];
 }) {
-  const [activeTab, setActiveTab] = useState<"showcase" | "events">("showcase");
-  const activeItems = activeTab === "showcase" ? designVideos : eventMedia;
 
   return (
     <section id="showcase" className="relative w-full">
@@ -98,37 +122,32 @@ export default function ShowcaseClient({
           </div>
         </div>
 
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-10 md:py-14">
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab("showcase")}
-              className={`filter-tab ${activeTab === "showcase" ? "active" : ""}`}
-            >
-              Design Showcase
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("events")}
-              className={`filter-tab ${activeTab === "events" ? "active" : ""}`}
-            >
-              Events Attended
-            </button>
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-12 py-10 md:py-14">
+          
+          {/* Design Showcase Slider */}
+          <div className="flex flex-col gap-4">
+            <h3 className="section-label">Design Showcase</h3>
+            <div className="-mx-4 overflow-x-auto px-4 pb-4 custom-scrollbar">
+              <div className="flex min-w-max gap-3 pt-2">
+                {designVideos.map((item, index) => (
+                  <MediaCard key={`${item.src}-${item.title}`} item={item} index={index} />
+                ))}
+              </div>
+            </div>
           </div>
 
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="-mx-4 overflow-x-auto px-4 pb-3"
-          >
-            <div className="flex min-w-max gap-3 pt-5">
-              {activeItems.map((item, index) => (
-                <MediaCard key={`${item.src}-${item.title}`} item={item} index={index} />
-              ))}
+          {/* Events Attended Slider */}
+          <div className="flex flex-col gap-4">
+            <h3 className="section-label">Events Attended</h3>
+            <div className="-mx-4 overflow-x-auto px-4 pb-4 custom-scrollbar">
+              <div className="flex min-w-max gap-3 pt-2">
+                {eventMedia.map((item, index) => (
+                  <MediaCard key={`${item.src}-${item.title}`} item={item} index={index} />
+                ))}
+              </div>
             </div>
-          </motion.div>
+          </div>
+
         </div>
 
         <div className="absolute bottom-0 left-1/2 h-px w-screen -translate-x-1/2 bg-border-light" />

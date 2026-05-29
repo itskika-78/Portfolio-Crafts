@@ -1,206 +1,208 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { useCursor } from "@/providers/CursorProvider";
 import { profile } from "@/data/portfolio";
+import MenuOverlay from "@/components/MenuOverlay";
 
-const navLinks = [
-  { label: "Profile", href: "#profile", symbol: "#" },
-  { label: "Experience", href: "#experience", symbol: "//" },
-  { label: "Projects", href: "#projects", symbol: "[]" },
-  { label: "Showcase", href: "#showcase", symbol: "<>" },
-  { label: "Companies", href: "#companies", symbol: "{}" },
-];
+function GlitchLogo() {
+  const chars = "@kika.skr";
+  const [glitching, setGlitching] = useState(false);
+  const glitchChars = "!<>-_\\/[]{}—=+*^?#";
 
-function Logo() {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGlitching(true);
+      setTimeout(() => setGlitching(false), 150);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="Home">
-      <div className="grid h-[22px] w-[22px] grid-cols-2 gap-[2px]">
-        {[0, 1, 2, 3].map((item) => (
+    <span
+      className="font-mono text-sm font-medium"
+      style={{
+        color: "var(--color-brand-primary)",
+        textShadow: "0 0 8px rgba(0,255,255,0.6)",
+        letterSpacing: "0.02em",
+      }}
+    >
+      {glitching
+        ? chars
+            .split("")
+            .map((c, i) =>
+              Math.random() > 0.6
+                ? glitchChars[Math.floor(Math.random() * glitchChars.length)]
+                : c
+            )
+            .join("")
+        : chars}
+    </span>
+  );
+}
+
+function MagneticMenuButton({ onClick }: { onClick: () => void }) {
+  const { setCursorMode, resetCursor } = useCursor();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 200, damping: 20, mass: 0.5 });
+  const springY = useSpring(y, { stiffness: 200, damping: 20, mass: 0.5 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    x.set(dx * 0.28);
+    y.set(dy * 0.28);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+    resetCursor();
+  };
+
+  return (
+    <motion.button
+      ref={buttonRef}
+      type="button"
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setCursorMode("link")}
+      style={{
+        x: springX,
+        y: springY,
+        cursor: "none",
+      }}
+      className="relative flex items-center gap-2 rounded-full px-4 py-2"
+      aria-label="Open navigation menu"
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      {/* Background pill */}
+      <motion.span
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: "rgba(255,255,255,0.06)",
+          border: "1px solid rgba(255,255,255,0.12)",
+        }}
+        whileHover={{ background: "rgba(0,255,255,0.06)", borderColor: "rgba(0,255,255,0.25)" }}
+        transition={{ duration: 0.2 }}
+      />
+
+      {/* Hamburger lines */}
+      <span className="relative flex flex-col gap-[5px]">
+        {[0, 1, 2].map((i) => (
           <motion.span
-            key={item}
-            className="bg-brand-primary"
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: item * 0.06, duration: 0.24 }}
+            key={i}
+            className="block rounded-full"
+            style={{
+              height: "1.5px",
+              background: "var(--color-shade-primary)",
+              width: i === 1 ? "16px" : "20px",
+            }}
           />
         ))}
-      </div>
-      <span className="font-mono text-[15px] font-medium leading-none text-shade-primary">
-        {profile.handle}
       </span>
-    </Link>
+
+      <span
+        className="relative font-mono text-xs"
+        style={{ color: "var(--color-shade-secondary)" }}
+      >
+        MENU
+      </span>
+    </motion.button>
   );
 }
 
 export default function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("profile");
+  const { setCursorMode, resetCursor } = useCursor();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 12);
+    const handleScroll = () => setScrolled(window.scrollY > 30);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+
+  // Lock body scroll when menu open
   useEffect(() => {
-    const sections = document.querySelectorAll("section[id]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: "-35% 0px -55% 0px", threshold: 0 }
-    );
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
 
   return (
-    <motion.header
-      initial={{ opacity: 0, y: -18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50"
-    >
-      <div
-        className="bs-nav transition-shadow duration-200"
-        style={{
-          boxShadow: scrolled
-            ? "0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.42)"
-            : "none",
-        }}
+    <>
+      <motion.header
+        className="fixed inset-x-0 top-0"
+        style={{ zIndex: "var(--z-nav)" }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="container-app flex items-center justify-between px-4 py-4 lg:px-5">
-          <div className="flex items-center gap-8">
-            <Logo />
-            <nav className="hidden items-center lg:flex" aria-label="Main navigation">
-              {navLinks.map((link) => {
-                const id = link.href.slice(1);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`nav-link ${activeSection === id ? "active" : ""}`}
-                  >
-                    <span className="text-[10px] opacity-60">{link.symbol}</span>
-                    {link.label}
-                  </Link>
-                );
-              })}
-              <button
-                type="button"
-                className="nav-link"
-                onClick={() =>
-                  window.dispatchEvent(new CustomEvent("open-craft-menu"))
-                }
-                aria-label="Open Craft menu"
-              >
-                <span className="text-[10px] opacity-60">◇</span>
-                Craft
-              </button>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <a href={`mailto:${profile.email}`} className="btn-primary hidden md:inline-flex">
-              Email
-            </a>
-            <button
-              type="button"
-              className="btn-ghost p-2.5 lg:hidden"
-              onClick={() => setMobileOpen((value) => !value)}
-              aria-label="Toggle menu"
-              aria-expanded={mobileOpen}
-            >
-              <motion.svg
-                width="18"
-                height="18"
-                viewBox="0 0 18 18"
-                fill="none"
-                animate={mobileOpen ? "open" : "closed"}
-              >
-                <motion.path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="1.5"
-                  variants={{
-                    closed: { d: "M2 4.5h14" },
-                    open: { d: "M4 4.5l10 9" },
-                  }}
-                />
-                <motion.path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="1.5"
-                  variants={{
-                    closed: { d: "M2 9h14", opacity: 1 },
-                    open: { d: "M9 9h0", opacity: 0 },
-                  }}
-                />
-                <motion.path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeWidth="1.5"
-                  variants={{
-                    closed: { d: "M2 13.5h14" },
-                    open: { d: "M4 13.5l10-9" },
-                  }}
-                />
-              </motion.svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {mobileOpen ? (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b border-border-light bg-background/95 backdrop-blur-xl lg:hidden"
-            aria-label="Mobile navigation"
+        <motion.div
+          animate={{
+            backdropFilter: scrolled ? "blur(20px)" : "blur(0px)",
+            background: scrolled ? "rgba(5,5,8,0.75)" : "transparent",
+            borderBottom: scrolled
+              ? "1px solid rgba(255,255,255,0.06)"
+              : "1px solid transparent",
+          }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center justify-between px-6 py-4 lg:px-8"
+        >
+          {/* Logo */}
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+            style={{ cursor: "none" }}
+            onMouseEnter={() => setCursorMode("link")}
+            onMouseLeave={resetCursor}
           >
-            <div className="container-app flex flex-col gap-1 px-4 py-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="nav-link w-full py-3"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <span className="text-[10px] opacity-60">{link.symbol}</span>
-                  {link.label}
-                </Link>
-              ))}
-              <button
-                type="button"
-                className="nav-link w-full py-3 text-left"
-                onClick={() => {
-                  setMobileOpen(false);
-                  window.dispatchEvent(new CustomEvent("open-craft-menu"));
+            <GlitchLogo />
+          </Link>
+
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            <motion.a
+              href={`mailto:${profile.email}`}
+              className="hidden items-center gap-2 font-mono text-xs md:flex"
+              style={{ color: "var(--color-shade-tertiary)", cursor: "none" }}
+              whileHover={{ color: "var(--color-shade-primary)" }}
+              transition={{ duration: 0.15 }}
+              onMouseEnter={() => setCursorMode("link")}
+              onMouseLeave={resetCursor}
+            >
+              <span
+                className="h-[6px] w-[6px] rounded-full"
+                style={{
+                  background: "var(--color-brand-primary)",
+                  boxShadow: "0 0 6px rgba(0,255,255,0.8)",
                 }}
-              >
-                <span className="text-[10px] opacity-60">◇</span>
-                Craft
-              </button>
-              <a
-                href={`mailto:${profile.email}`}
-                className="btn-primary mt-3 w-full"
-                onClick={() => setMobileOpen(false)}
-              >
-                Email
-              </a>
-            </div>
-          </motion.nav>
-        ) : null}
-      </AnimatePresence>
-    </motion.header>
+              />
+              Available for work
+            </motion.a>
+
+            <MagneticMenuButton onClick={() => setMenuOpen(true)} />
+          </div>
+        </motion.div>
+      </motion.header>
+
+      <MenuOverlay isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   );
 }

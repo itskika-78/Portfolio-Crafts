@@ -7,6 +7,8 @@ export const profile = {
   bio:
     "Just a decentralized 15 year old.",
   github: "https://github.com/itskika-78?tab=repositories",
+  twitter: "https://x.com/itskika_78", // placeholder or real based on common handles
+  resume: "/resume.pdf",
 };
 
 export const experience = [

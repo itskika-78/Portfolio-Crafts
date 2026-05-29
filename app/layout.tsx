@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Fira_Code, Space_Grotesk } from "next/font/google";
 import Navbar from "@/components/sections/Navbar";
 import CraftMenuServer from "@/components/CraftMenuServer";
+import SmoothScrollProvider from "@/providers/SmoothScrollProvider";
+import CursorProvider from "@/providers/CursorProvider";
+import ClientShell from "@/components/ClientShell";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -19,27 +22,30 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-  title: "Kika - Design Engineer",
-  description: "Portfolio for Kika, a design engineer and builder.",
+  title: "Kika — Full-Stack Developer & Builder",
+  description:
+    "Portfolio of Kika, a 15-year-old full-stack developer specializing in Next.js, Solana, and creative coding. Building decentralized applications and immersive web experiences.",
   keywords: [
     "Kika",
-    "Design Engineer",
-    "Frontend Developer",
+    "Full-Stack Developer",
     "Solana",
-    "Web3",
     "Next.js",
-    "Portfolio",
+    "Web3",
+    "Creative Coding",
     "React",
+    "Portfolio",
+    "Design Engineer",
   ],
   authors: [{ name: "Kika" }],
   openGraph: {
-    title: "Kika - Design Engineer",
-    description: "Portfolio for Kika, a design engineer and builder.",
+    title: "Kika — Full-Stack Developer & Builder",
+    description:
+      "15-year-old full-stack developer. Next.js · Solana · Creative Coding.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kika - Full Stack Developer",
+    title: "Kika — Full-Stack Developer",
   },
 };
 
@@ -47,21 +53,29 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body
-        className={`${spaceGrotesk.variable} ${firaCode.variable} min-h-dvh overflow-x-hidden bg-background font-sans text-shade-primary antialiased`}
+        className={`${spaceGrotesk.variable} ${firaCode.variable} font-sans`}
       >
-        <div className="pointer-events-none fixed inset-0 z-[-1] bg-grid-pattern" />
-        <div
-          className="pointer-events-none fixed inset-0 z-[-1]"
-          style={{
-            background:
-              "radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,255,255,0.06) 0%, transparent 70%)",
-          }}
-        />
-        <Navbar />
-        <CraftMenuServer />
-        {children}
+        {/* 
+          Z-Index Stacking (bottom → top):
+          0   → WebGL Canvas (fixed, persistent)
+          1   → Noise grain overlay (::before pseudo, CSS)
+          10  → Main scroll content
+          50  → Navbar + MenuOverlay
+          100 → CraftMenu
+          200 → Preloader
+          300 → Custom Cursor
+        */}
+        <CursorProvider>
+          <SmoothScrollProvider>
+            <ClientShell>
+              <Navbar />
+              <CraftMenuServer />
+              {children}
+            </ClientShell>
+          </SmoothScrollProvider>
+        </CursorProvider>
       </body>
     </html>
   );
