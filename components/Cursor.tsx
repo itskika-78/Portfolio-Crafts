@@ -65,8 +65,7 @@ export default function Cursor() {
         style={{ x: dotX, y: dotY }}
       >
         <motion.div
-          className="absolute rounded-full bg-brand-primary"
-          style={{ mixBlendMode: "difference" }}
+          className="absolute rounded-full bg-brand-primary cursor-dot transition-colors duration-300"
           animate={{
             width: dotSize,
             height: dotSize,
@@ -84,16 +83,13 @@ export default function Cursor() {
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className="absolute rounded-full border border-brand-primary flex items-center justify-center"
-          style={{ mixBlendMode: "difference" }}
+          className={`absolute rounded-full border flex items-center justify-center cursor-ring transition-colors duration-300 ${isExpanded ? 'cursor-ring-active border-brand-primary/90 bg-brand-primary/10' : 'border-brand-primary/45 bg-transparent'}`}
           animate={{
             width: ringSize,
             height: ringSize,
             x: "-50%",
             y: "-50%",
             opacity: mode === "hidden" ? 0 : isExpanded ? 0.85 : 0.45,
-            borderColor: isExpanded ? "rgba(0, 255, 255, 0.9)" : "rgba(0, 255, 255, 0.45)",
-            backgroundColor: isExpanded ? "rgba(0, 255, 255, 0.08)" : "transparent",
           }}
           transition={{ duration: 0.3 }}
         >
