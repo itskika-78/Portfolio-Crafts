@@ -1,25 +1,19 @@
 import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
-import Experience from "@/components/sections/Experience";
-import Skills from "@/components/sections/Skills";
-import Projects from "@/components/sections/Projects";
-import Showcase from "@/components/sections/Showcase";
-import Crafts from "@/components/sections/Crafts";
-import Contact from "@/components/sections/Contact";
-import Footer from "@/components/sections/Footer";
+import Specialize from "@/components/sections/Specialize";
+import Companies from "@/components/sections/Companies";
+import Cases from "@/components/sections/Cases";
+import ProfileMatrix from "@/components/sections/ProfileMatrix";
+import FooterWordmark from "@/components/sections/FooterWordmark";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Crafts />
-      <Showcase />
-      <Contact />
-      <Footer />
+      <Specialize />
+      <Companies />
+      <Cases />
+      <ProfileMatrix />
+      <FooterWordmark />
     </main>
   );
 }

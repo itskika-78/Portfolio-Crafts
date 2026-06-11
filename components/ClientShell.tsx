@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import WebGLBackground from "@/components/canvas/WebGLBackground";
+import LightRays from "@/components/canvas/LightRays";
 import Cursor from "@/components/Cursor";
 import Preloader from "@/components/Preloader";
 
@@ -19,10 +19,10 @@ export default function ClientShell({
 
   return (
     <>
-      {/* Layer 0: Canvas 2D Background (always fixed) */}
-      {mounted && <WebGLBackground />}
+      {/* Layer 0: volumetric light backdrop */}
+      {mounted && <LightRays />}
 
-      {/* Layer 10: Main scrollable content */}
+      {/* Layer 10: main scrollable content */}
       <div
         id="main-scroll-wrapper"
         className="relative"
@@ -36,12 +36,12 @@ export default function ClientShell({
         {children}
       </div>
 
-      {/* Layer 200: Preloader */}
+      {/* Layer 300: preloader */}
       {mounted && !preloaderDone && (
         <Preloader onComplete={() => setPreloaderDone(true)} />
       )}
 
-      {/* Layer 300: Custom Cursor */}
+      {/* Layer 400: custom cursor */}
       {mounted && <Cursor />}
     </>
   );

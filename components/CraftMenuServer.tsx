@@ -1,8 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import { extname, join, parse } from "node:path";
 import { designShowcaseLinks } from "@/data/portfolio";
-import CraftMenuClient from "./CraftMenuClient";
-import type { MediaItem } from "./sections/ShowcaseClient";
+import CraftMenuClient, { type MediaItem } from "./CraftMenuClient";
 
 const videoExtensions = new Set([".mp4", ".webm", ".mov", ".m4v"]);
 const videoOrder = [
